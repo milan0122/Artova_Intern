@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details</title>
+</head>
+<body>
+    <h1>{{task.title}}</h1>
+    <p>{{task.description}}</p>
+    <p>Created on :{{task.created_at}}</p>
+    <a href="{% url 'task_list' %}">Back to Task List</a>
+    <a href="{% url 'delete_task' task.id %}">Delete Task</a>
+    <!-- adding edit button -->
+    <a href="{% url 'edit_task' task.id %}">Edit Task</a>
+</body>
+</html>
