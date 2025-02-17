@@ -32,11 +32,11 @@ def delete_task(request,task_id):
 
 def edit_task(request,task_id):
     task = get_object_or_404(Task,id=task_id)
+    form = taskForm(instance=task)
     if request.method == 'POST':
         form = taskForm(request.POST,instance=task)
         if form.is_valid():
             form.save()
             return redirect('task_detail',task_id=task.id)
-        else:
-            form = taskForm(instance=task)
-    return render(request,'tasks/edit_task.html',{'form':form,'task':task})
+    context= {'form':form,'task':task}
+    return render(request,'tasks/edit_task.html',context)
