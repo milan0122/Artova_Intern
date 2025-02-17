@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-
+from django.core.paginator import Paginator
 # Create your views here.
 from django.http import HttpResponse
 from .models import Task
@@ -7,8 +7,16 @@ from .forms import taskForm
 def Hello(request):
     return HttpResponse("Welcome to the Internship Program")
 def Task_list(request):
-    tasks = Task.objects.all()
-    return render(request,'tasks/task_list.html',{'tasks':tasks})
+    # tasks = Task.objects.all()
+    # return render(request,'tasks/task_list.html',{'tasks':tasks})
+    tasks = Task.objects.all().order_by('-created_at') #display by latest task first
+    paginator = Paginator(tasks,5) #show 5 task per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'page_obj':page_obj,'tasks':tasks,'page_number':page_number,'paginator':paginator}
+    return render(request,'tasks/task_list.html',context)
+
+    pass
 
 def create_task(request):
     form = taskForm()
