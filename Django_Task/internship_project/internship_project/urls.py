@@ -16,9 +16,11 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
-from tasks.views import Hello,Task_list,create_task,delete_task,task_detail,edit_task
 
+from django.urls import path
+from tasks.views import Hello,Task_list,create_task,delete_task,task_detail,edit_task,logoutUser
+from django.contrib.auth import views as auth_views
+from django.views.generic import TemplateView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("hello/",Hello,name='Hello'),
@@ -27,5 +29,9 @@ urlpatterns = [
     path("task/<int:task_id>/",task_detail,name='task_detail'),
     path('task/<int:task_id>/delete/',delete_task,name='delete_task'),
     path('task/<int:task_id>/edit/',edit_task,name='edit_task'),
+    
+    path('login/', auth_views.LoginView.as_view(template_name='tasks/login.html'), name='login'),
+    # path('logout/', auth_views.LogoutView.as_view(), name='logout'), 
+    path('logout/',logoutUser,name='logout')
 
 ]

@@ -1,23 +1,37 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.core.paginator import Paginator
-# Create your views here.
 from django.http import HttpResponse
 from .models import Task
 from .forms import taskForm
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 def Hello(request):
     return HttpResponse("Welcome to the Internship Program")
+
+def logoutUser(request):
+    logout(request)
+    return redirect('login')
+
+@login_required
 def Task_list(request):
     # tasks = Task.objects.all()
     # return render(request,'tasks/task_list.html',{'tasks':tasks})
-    tasks = Task.objects.all().order_by('-created_at') #display by latest task first
+    query = request.GET.get('q')
+    if query:
+        tasks = Task.objects.filter(title__icontains=query).order_by('-created_at')
+    else:
+        tasks = Task.objects.all().order_by('-created_at')
+
+    #tasks = Task.objects.all().order_by('-created_at') #display by latest task first
+        #pagination
     paginator = Paginator(tasks,5) #show 5 task per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context = {'page_obj':page_obj,'tasks':tasks,'page_number':page_number,'paginator':paginator}
+    context = {'page_obj':page_obj,'query':query}
     return render(request,'tasks/task_list.html',context)
 
-    pass
-
+  
+@login_required
 def create_task(request):
     form = taskForm()
     if request.method == 'POST':
@@ -27,6 +41,7 @@ def create_task(request):
             return redirect('task_list')    
     return render(request,'tasks/create_task.html',{'form':form})
 
+@login_required
 def task_detail(request,task_id):
     task = get_object_or_404(Task,id=task_id)
     return render(request,'tasks/task_detail.html',{'task':task})
