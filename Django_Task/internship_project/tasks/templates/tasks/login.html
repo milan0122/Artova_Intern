@@ -15,6 +15,7 @@
     {% if form.errors %}
     <p style="color:red">Invalid username or password. Please try again. </p>
     {%endif %}
+    <p>Don't have an Account? <a href="{% url 'register' %}">Register</a></p>
     
 </body>
 </html>

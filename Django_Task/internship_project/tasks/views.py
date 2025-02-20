@@ -2,15 +2,30 @@ from django.shortcuts import render,redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from .models import Task
-from .forms import taskForm
-from django.contrib.auth import logout
+from .forms import taskForm,UserRegistrationForm,ProfileUpdateForm
+from django.contrib.auth import logout,login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 def Hello(request):
     return HttpResponse("Welcome to the Internship Program")
 
 def logoutUser(request):
     logout(request)
     return redirect('login')
+def register(request):
+    forms= UserRegistrationForm()
+    if request.method == 'POST':
+        forms = UserRegistrationForm(request.POST)
+        if forms.is_valid():
+            user = forms.save(commit=False)
+            user.set_password(forms.cleaned_data['password'])
+            user.save()
+            login(request,user) #Automatically log the user 
+            return redirect('task_list')
+        # else:
+        #     forms = UserRegistrationForm()
+    return render(request,'tasks/register.html',{'forms':forms})
+
 
 @login_required
 def Task_list(request):
@@ -63,3 +78,15 @@ def edit_task(request,task_id):
             return redirect('task_detail',task_id=task.id)
     context= {'form':form,'task':task}
     return render(request,'tasks/edit_task.html',context)
+@login_required
+def update_profile(request):
+    user = request.user.profile
+    if request.method=='POST':
+        up_form = ProfileUpdateForm(request.POST,request.FILES,instance=user)
+        if up_form.is_valid():
+            up_form.save()
+            return redirect('task_list')
+    else:
+        up_form= ProfileUpdateForm(instance=user)
+    return render(request,'tasks/update_profile.html',{'up_form':up_form})
+    

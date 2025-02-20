@@ -1,56 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task_List</title>
+    <style>
+        .container {
+            height: 100px;
+            width: 100%;
+            display: flex;
+            /* justify-content: space-evenly; */
+            align-items: center; 
+             /* background-color: aqua; */
+        }
+         .container-nav a{
+            display: inline-block;
+            text-decoration: none;
+            color:black;
+            font-size: 24px;
+            margin-left: 100px;
+        }
+        .welcome p{
+            font-size: 30px;
+            font-weight:500;
+        }
+    </style>
 </head>
+
 <body>
     <div>
-        {% if user.is_authenticated %}
-        <p>Welcome,{{user.username}}! <a href="{% url 'logout' %}">LogOut</a></p>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'register' %}">Register</a>| <a href="{%url 'login' %}">Login</a>
         {% else %}
-        <a href="{% url 'login' %}">Login</a>
+        <div class="container">
+            <div class="welcome">
+                <p>Welcome, {{user.username}}!</p>
+            </div>
+           <div class="container-nav">
+            <a href="{% url 'update_profile' %}">Profile</a>
+            <a href="{% url 'logout' %}">LogOut</a>
+
+           </div>
+           
+
+        </div>
+
         {% endif %}
     </div>
     <h1>Task List</h1>
 
     <!-- search  Task-->
     <form action="{% url 'task_list' %}" method="Get">
-        <input type="text" name="q" placeholder="Search Task.." >
+        <input type="text" name="q" placeholder="Search Task..">
         <button type="submit">Search</button>
 
     </form>
     <ul>
-    {% for task in page_obj %}
-    <li>
-        <strong>{{task.title}}</strong><br>
-        {{task.description}} <br>
-        Created on :{{task.created_at}}
-    </li>
-    {% endfor %}
-</ul>
-<div>
-    <span>Page{{page_obj.number}} of {{page_obj.paginator.num_pages}}</span>
-</div>
-<div>
-    {% if page_obj.has_previous %}
-    <a href="?q={{query}}&page=1">First</a>
-    <a href="?q={{query}}&page={{page_obj.previous_page_number}}">Previous</a>
-    {% endif %}
+        {% for task in page_obj %}
+        <li>
+            <strong>{{task.title}}</strong><br>
+            {{task.description}} <br>
+            Created on :{{task.created_at}}
+        </li>
+        {% endfor %}
+    </ul>
+    <div>
+        <span>Page{{page_obj.number}} of {{page_obj.paginator.num_pages}}</span>
+    </div>
+    <div>
+        {% if page_obj.has_previous %}
+        <a href="?q={{query}}&page=1">First</a>
+        <a href="?q={{query}}&page={{page_obj.previous_page_number}}">Previous</a>
+        {% endif %}
 
-    {% for num in page_obj.paginator.page_range %}
-    {% if page_obj.number == num %}
-    <strong>{{num}}</strong>
-    {% else %}
-    <a href="?q={{query}}&page={{num}}">{{num}}</a>
-    {% endif %}
-    {% endfor %}
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <strong>{{num}}</strong>
+        {% else %}
+        <a href="?q={{query}}&page={{num}}">{{num}}</a>
+        {% endif %}
+        {% endfor %}
 
-    {% if page_obj.has_next %}
-    <a href="?q={{query}}&page={{page_obj.next_page_number}}">Next</a>
-    <a href="?q={{query}}&page={{page_obj.paginator.num_pages}}">Last</a>
-    {% endif %}
-</div>
+        {% if page_obj.has_next %}
+        <a href="?q={{query}}&page={{page_obj.next_page_number}}">Next</a>
+        <a href="?q={{query}}&page={{page_obj.paginator.num_pages}}">Last</a>
+        {% endif %}
+    </div>
 </body>
+
 </html>

@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 
 from django.urls import path
-from tasks.views import Hello,Task_list,create_task,delete_task,task_detail,edit_task,logoutUser
+from tasks.views import Hello,update_profile,Task_list,create_task,delete_task,task_detail,edit_task,logoutUser,register
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 urlpatterns = [
@@ -32,6 +32,12 @@ urlpatterns = [
     
     path('login/', auth_views.LoginView.as_view(template_name='tasks/login.html'), name='login'),
     # path('logout/', auth_views.LogoutView.as_view(), name='logout'), 
-    path('logout/',logoutUser,name='logout')
+    path('logout/',logoutUser,name='logout'),
+
+    #for register
+    path('register/',register,name='register'),
+
+    
+    path('profile/update',update_profile,name='update_profile')
 
 ]
