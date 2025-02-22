@@ -18,9 +18,11 @@ Including another URLconf
 from django.contrib import admin
 
 from django.urls import path
-from tasks.views import Hello,update_profile,Task_list,create_task,delete_task,task_detail,edit_task,logoutUser,register
+from tasks.views import Hello,update_profile,Task_list,create_task,delete_task,task_detail,edit_task,logoutUser,register,user_profile
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("hello/",Hello,name='Hello'),
@@ -37,7 +39,16 @@ urlpatterns = [
     #for register
     path('register/',register,name='register'),
 
-    
-    path('profile/update',update_profile,name='update_profile')
+    path('profile/update',update_profile,name='update_profile'),
+    path('profile/<str:username>/',user_profile,name='user_profile'),
 
 ]
+#password reset functionality
+urlpatterns +=[
+    path('password_reset/',auth_views.PasswordResetView.as_view(template_name='tasks/password_reset.html'), name='password_reset'),
+    path('password_reset_done',auth_views.PasswordResetDoneView.as_view(template_name='tasks/password_reset_done.html'),name='password_reset_done'),
+    path('reset/<uidb64>/<token>/',auth_views.PasswordResetConfirmView.as_view(template_name='tasks/password_reset_confirm.html'),name='password_reset_confirm'),
+    path('reset/done/',auth_views.PasswordResetCompleteView.as_view(template_name='tasks/password_reset_complete.html'),name='password_reset_complete')
+]
+
+urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

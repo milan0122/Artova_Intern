@@ -115,8 +115,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = "static/"
+
+
+STATICFILES_DIRS =[
+    BASE_DIR / 'static'
+]
+# when forms submitted where to upload images
+MEDAI_URL = '/profile_pics/'
+MEDIA_ROOT = BASE_DIR / 'static/profile_pics'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -126,3 +133,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 #confgruing login redirects
 LOGIN_REDIRECT_URL = '/tasks/' #redirect to task_list page after sucessful login
 LOGOUT_REDIRECT_URL = '/login/' #redirect to login if user log out
+#password reset functionality 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -78,6 +78,15 @@ def edit_task(request,task_id):
             return redirect('task_detail',task_id=task.id)
     context= {'form':form,'task':task}
     return render(request,'tasks/edit_task.html',context)
+
+
+@login_required
+def user_profile(request,username):
+    user = get_object_or_404(User, username=username)
+    profile = user.profile
+    context = {'user':user,'profile':profile}
+    return render(request,'tasks/user_profile.html',context)
+
 @login_required
 def update_profile(request):
     user = request.user.profile

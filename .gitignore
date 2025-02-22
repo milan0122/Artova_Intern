@@ -1,3 +1,6 @@
 .DS_Store
 Day1.ipynb
 .ipynb_checkpoints/
+tasks/migrations/
+tasks/__pycache__/
+ internship_project/__pycache__/

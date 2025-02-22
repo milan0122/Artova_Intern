@@ -6,6 +6,7 @@
     <title>Task Details</title>
 </head>
 <body>
+    <!-- <p>Created by: <a href="{% url 'user_profile' task.created_by.username %}">{{task.created_by.username}}</a></p> -->
     <h1>{{task.title}}</h1>
     <p>{{task.description}}</p>
     <p>Created on :{{task.created_at}}</p>
