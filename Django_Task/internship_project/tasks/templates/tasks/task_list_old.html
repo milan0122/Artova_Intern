@@ -27,7 +27,31 @@
             font-size: 30px;
             font-weight: 500;
         }
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
 
+        .task-list li {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-list li.completed {
+            background-color: #e0f7fa;
+        }
+
+        .task-list li.pending {
+            background-color: #ffe0b2;
+        }
+
+        form {
+            display: inline;
+        }
     </style>
 </head>
 
@@ -56,16 +80,54 @@
     <!-- search  Task-->
     <form action="{% url 'task_list' %}" method="Get">
         <input type="text" name="query" placeholder="Search Task.." value="{{request.GET.query}}">
+        <select name="status" id="">
+            <option value="">All</option>
+            <option value="False" {% if request.GET.status == 'False' %} selected {% endif %}>Pending</option>
+            <option value="True" {% if request.GET.status == 'True' %} selected {% endif %}>Completed</option>
+        </select>
         <button type="submit">Search</button>
 
     </form>
-    <h2>Task List</h2>
+    <!-- <h2>Task List</h2>
     {% if query %}
     <p>Search Results for: {{query}} </p>
     {% if not tasks %}
     <p>No task found matching your query</p>
     {% endif %}
-    {% endif %}
+    {% endif %} -->
+
+    <!-- Displaying Task List -->
+    <ul class="task-list">
+        {% for task in tasks %}
+            <li class="{% if task.is_complete %}completed{% else %}pending{% endif %}">
+                <div>
+                    <h3>{{ task.title }}</h3>
+                    <p>{{ task.description }}</p>
+                    <p>Status: 
+                        {% if task.is_complete %}
+                            <strong>Completed</strong>
+                        {% else %}
+                            <strong>Pending</strong>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <!-- Mark as Complete/Incomplete Form -->
+                <form action="{% url 'task_list' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="task_id" value="{{ task.id }}">
+                    <label>
+                        <input type="checkbox" name="is_complete" {% if task.is_complete %} checked {% endif %} onchange="this.form.submit();"> 
+                        Mark as Complete
+                    </label>
+                </form>
+            </li>
+        {% empty %}
+            <li>No tasks found.</li>
+        {% endfor %}
+    </ul>
+
+
 
     <ul>
         {% for task in tasks %}
@@ -75,9 +137,6 @@
         {% endfor %}
     </ul>
     <ul>
-
-
-        
         {% for task in page_obj %}
         <li>
             <strong>{{task.title}}</strong><br>

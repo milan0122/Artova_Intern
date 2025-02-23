@@ -6,6 +6,7 @@ from .forms import taskForm,UserRegistrationForm,ProfileUpdateForm
 from django.contrib.auth import logout,login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Q
 def Hello(request):
     return HttpResponse("Welcome to the Internship Program")
 
@@ -26,23 +27,43 @@ def register(request):
         #     forms = UserRegistrationForm()
     return render(request,'tasks/register.html',{'forms':forms})
 
+# def Task_list(request):
+    # tasks = Task.objects.all()
+    # # return render(request,'tasks/task_list.html',{'tasks':tasks})
+    # query = request.GET.get('query')
+    # status = request.GET.get('status')
+    # if query:
+    #     tasks = Task.objects.filter(Q(title__icontains=query)|Q(description__icontains=query))
+    #     # tasks = Task.objects.filter(title__icontains=query).order_by('-created_at')
+    # if status:
+    #    # tasks = Task.objects.all().order_by('-created_at')
+    #     if status == 'True':
+    #         tasks = tasks.filter(status=status)
+    #     elif status == 'False':
+    #         tasks = tasks.filter(status=status)
+    # if request.method == 'POST':
+    #     task_id = request.POST.get('task_id')
+    #     if task_id:
+    #         task = Task.objects.get(id=task_id)
+    #         task.status = not task.status
+    #         task.save()
+    #         #redirect to same page
+    #         return redirect(f'{request.path}?query={query}&status={status}')
 
 @login_required
 def Task_list(request):
-    # tasks = Task.objects.all()
-    # return render(request,'tasks/task_list.html',{'tasks':tasks})
-    query = request.GET.get('q')
+    tasks = Task.objects.all()
+    query = request.GET.get('query')
     if query:
-        tasks = Task.objects.filter(title__icontains=query).order_by('-created_at')
+        tasks = Task.objects.filter(Q(title__icontains=query)|Q(description__icontains=query))
     else:
-        tasks = Task.objects.all().order_by('-created_at')
+        tasks = Task.objects.all()
 
-    #tasks = Task.objects.all().order_by('-created_at') #display by latest task first
-        #pagination
+        
     paginator = Paginator(tasks,5) #show 5 task per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    context = {'page_obj':page_obj,'query':query}
+    context = {'page_obj':page_obj,'query':query,'tasks':tasks}
     return render(request,'tasks/task_list.html',context)
 
   
